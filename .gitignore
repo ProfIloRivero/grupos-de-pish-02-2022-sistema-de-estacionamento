@@ -1,0 +1,30 @@
+qr-reader/node_modules/
+qr-reader/.expo/
+qr-reader/dist/
+qr-reader/npm-debug.*
+qr-reader/*.jks
+qr-reader/*.p8
+qr-reader/*.p12
+qr-reader/*.key
+qr-reader/*.mobileprovision
+qr-reader/*.orig.*
+qr-reader/web-build/
+
+# macOS
+qr-reader/.DS_Store
+
+
+user-app/node_modules/
+user-app/.expo/
+user-app/dist/
+user-app/npm-debug.*
+user-app/*.jks
+user-app/*.p8
+user-app/*.p12
+user-app/*.key
+user-app/*.mobileprovision
+user-app/*.orig.*
+user-app/web-build/
+
+# macOS
+user-app/.DS_Store

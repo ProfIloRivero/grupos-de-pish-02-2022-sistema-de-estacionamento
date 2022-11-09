@@ -1,0 +1,1 @@
+export const apiUrl = 'https://da0c-2804-14c-5bb1-4188-aca2-1c10-745b-e5d4.sa.ngrok.io/pish-64141/us-central1/app/api/'
