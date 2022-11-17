@@ -18,11 +18,14 @@ const style = StyleSheet.create({
         borderWidth: 4,
         borderBottomWidth: 0,
         borderColor: '#8a8a8a',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         alignItems: 'center',
+        flexDirection: 'row',
         fontSize: 20,
     },
     text: {
+        width: '60%',
+        marginLeft: 15,
         color: '#fff',
         fontSize: 20,
         fontWeight: 'bold',
@@ -46,11 +49,23 @@ const style = StyleSheet.create({
         width: 230,
         height: 230,
         borderWidth: 5,
-        backgroundColor: '#fff',
+        backgroundColor: '#ffff',
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 50,
     },
+    button: {
+        button: {
+            width: '20%',
+            height: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        text: {
+            fontSize: 30,
+            color: '#fff',
+        }
+    }
 })
 
 export default style

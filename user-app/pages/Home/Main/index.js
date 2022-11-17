@@ -2,11 +2,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useContext, useEffect, useState } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import AuthenticationContext from "../../../config/Context/Authentication";
+import Ionicons from 'react-native-vector-icons/Ionicons'
 import StatusTime from "../../../components/StatusTime";
 import NetInfo from '@react-native-community/netinfo'
 import QRCode from "react-native-qrcode-svg";
 import { apiUrl } from "../../../config";
 import style from "./style";
+import Button from "../../../components/Button";
 
 const Main = ({ navigation }) => {
 
@@ -20,7 +22,7 @@ const Main = ({ navigation }) => {
     const [cost, setCost] = useState(null)
 
     useEffect(() => {
-        
+        setIsLoading(true)
         try {
             (async () => {
                 const data = await AsyncStorage.getItem('@data')
@@ -29,6 +31,7 @@ const Main = ({ navigation }) => {
                     const {id, name} = JSON.parse(data)
                     setIdQR(id)
                     setName(name)
+                    GetTime_Cost(id)
                     setIsLoading(false) 
                 }else{
                     setIsLogged(false)
@@ -53,16 +56,11 @@ const Main = ({ navigation }) => {
 
         return (() => {unsubscribe()})
     }, [])
-
-    useEffect(() => {
-        if(idQR){
-            GetTime_Cost()
-        }
-    }, [idQR])
-
-    const GetTime_Cost = () => {
+    
+    const GetTime_Cost = (id) => {
+        setIsLoading(true)
         fetch(
-            `${apiUrl}time_cost/${idQR}`, {
+            `${apiUrl}time_cost/${id}`, {
                 method: 'get',
                 mode: 'cors',
                 headers: {
@@ -79,40 +77,47 @@ const Main = ({ navigation }) => {
             setCost(data.cost)
             setStartTime(data.startTime)
             setEndTime(data.endTime)
+            setIsLoading(false)
         })
         .catch(err => {
+            setIsLoading(false)
             alert(`[ERRO] Não foi possível encontrar os dados\n${err}`)
         })
     }
 
-    const GetPay = () => {
-        setIsPaying(true)
+    const GetPay = async () => {
         if(isConnected){
-            fetch(
-                `${apiUrl}pay/${idQR}`, {
-                    method: 'get',
-                    mode: 'cors',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-            .then(res => {
-                if(res.ok){
-                    return res.json()
+            try {
+                setIsPaying(true)
+                const res = await fetch(
+                    `${apiUrl}pay/${idQR}`, {
+                        method: 'get',
+                        mode: 'cors',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+    
+                if(res.status == 502){
+                    throw 'Nao foi possivel conectar ao servidor'
                 }
-                return Promise.reject('Não foi possivel conectar ao servidor')
-            })
-            .then(data => {
+    
+                if(res.status != 200){
+                    throw await res.text()
+                }
+    
+                const data = await res.json()
+    
+            
                 setCost(data.cost)
                 setStartTime(data.startTime)
                 setEndTime(data.endTime)
                 setIsPaying(false)
                 alert('[PAGAMENTO] Pagamento efetuado com sucesso!')
-            })
-            .catch(err => {
+            }catch(err){
                 setIsPaying(false)
-                alert(`[ERRO] Não foi possível realizar o pagamento\n${err}`)
-            })
+                alert(`[ERRO] Nao foi possivel realizar o pagamento\n${err}`)
+            }
         }else{
             alert(`[ERRO] Sem conexão`)
         }
@@ -122,6 +127,7 @@ const Main = ({ navigation }) => {
         <View style={style.container}>
             <View style={style.header}>
                 <Text style={style.text}>{isLoading ? '...' : `Ola, ${name.split(' ')[0]}`}</Text>
+                <Button style={style.button} title={<Ionicons name='reload' size={25}/>} action={() => {GetTime_Cost(idQR)}}/>
             </View>
             <View style={style.contentArea}>
                 <View style={style.qrc}>
